@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     main.c
-  @brief    Main file
-  @author   Nicolï¿½s Magliola
+  @brief    Archivo principal
+  @Author   Ignacion Quintana, Teo Nicoletti, Tristan Gonzalez Branca y Pedro Garcia Delucis
  ******************************************************************************/
 
 /*******************************************************************************
@@ -30,8 +30,8 @@
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
-void AppInit (void);
-void AppRun (void);
+void AppInit(void);
+void AppRun(void);
 void checkOpen(void);
 
 /*******************************************************************************
@@ -44,111 +44,115 @@ void checkOpen(void);
                         GLOBAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-display_t display = {
-        .psw_try = {0, 0, 0, 0},
-        .active = 0
-    };
 
-const char PSW[] = {1,2,3,4}; //contraseña
+// Estructura de datos para el display
+display_t display = {
+    .psw_try = {0, 0, 0, 0},
+    .active = 0
+};
+
+const char PSW[] = {1, 2, 3, 4}; // Contraseña
 uint8_t mistakes = 0;
 
-void main (void)
-{ // NO TOCAR
-
+void main(void)
+{
+    // NO TOCAR
     systemInitFirst();
     boardInit();
     AppInit();
     systemInitLast();
 
-
-    for(;;)
+    for (;;)
         AppRun();
-} // NO TOCAR
+    // NO TOCAR
+}
 
-
-void AppInit (void)
+void AppInit(void)
 {
-    // setup (se ejecuta 1 sola vez al comienzo)
-    // TODO: COMPLETAR CON LA INICIALIZACIï¿½N DE DRIVERS Y APLICACIï¿½N
-
+    // Inicialización (se ejecuta 1 sola vez al comienzo)
+    // Inicialización del display
     setDisplay(display.psw_try);
     setActive(display.active);
     displayInit();
-    encoderInit();
-    buttonInit();
-    ledsInit(mistakes);
+    encoderInit(); // Inicialización del encoder
+    buttonInit(); // Inicialización del boton
+    ledsInit(mistakes); // Inicialización de los LEDs (contador de errores)
 }
 
-
-
-void AppRun (void)
+void AppRun(void)
 {
-    // loop (se ejecuta constantemente en un ciclo infinito)
-    // TODO: COMPLETAR CON EL FUNCIONAMIENTO DEL PROGRAMA
+    // Loop (se ejecuta constantemente en un ciclo infinito)
+
+    // Verificar si se ha cambiado el estado del encoder
     uint8_t encoderFlag = encoderGetStatus();
     uint8_t buttonFlag = buttonGetStatus();
-    switch (encoderFlag){
-    case 1:
-        encoderResetStatus();
-        display.psw_try[display.active] = display.psw_try[display.active]+1;
-        display.psw_try[display.active] %= 10;
-        setDisplay(display.psw_try);
-        break;
-    case 2:
-        encoderResetStatus();
-        if (display.psw_try[display.active]==0)
-            display.psw_try[display.active]=10;
-        display.psw_try[display.active] = display.psw_try[display.active] -1;
-        display.psw_try[display.active] %= 10;
-        setDisplay(display.psw_try);
-        break;
+    // Logica segun estado del encoder
+    switch (encoderFlag) {
+        case 1:
+            // El encoder gira en sentido horario
+            encoderResetStatus(); // Reinicia el estado del encoder
+            // Logica para aumentar el numero visible en el display entre 0 y 9
+            display.psw_try[display.active] = display.psw_try[display.active] + 1;
+            display.psw_try[display.active] %= 10;
+            setDisplay(display.psw_try); // Muestra el numero en el display
+            break;
+        case 2:
+            // El encoder gira en sentido antihorario
+            encoderResetStatus(); // Reinicia el estado del encoder
+            // Logica para aumentar el numero visible en el display entre 0 y 9
+            if (display.psw_try[display.active] == 0)
+                display.psw_try[display.active] = 10;
+            display.psw_try[display.active] = display.psw_try[display.active] - 1;
+            display.psw_try[display.active] %= 10;
+            setDisplay(display.psw_try); // Muestra el numero en el display activo
+            break;
     }
 
-    if(buttonFlag){
+    if (buttonFlag) {
+        // Se ha presionado el botón
         buttonResetStatus();
-        display.active++;
+        display.active++; // Cambiar que display se esta modificando
 
         if (display.active == 4)
-                checkOpen();
+            checkOpen(); // Cuando el usuario toca le boton estado en el ultimo display se verifica si la contrasena es correcta
 
-
-        display.active %=4;
+        display.active %= 4; // Se mantiene el contador para solo 4 displays
         setActive(display.active);
     }
 }
 
-void checkOpen(){
+void checkOpen() // Verificar si la contraseña ingresada es correcta
+{
     int i;
-    for(i=0; i<4; i++){
-        if(PSW[i] != display.psw_try[i]){
-            mistakes++;
-            setLeds(mistakes);
+    for (i = 0; i < 4; i++) {
+        if (PSW[i] != display.psw_try[i]) {
+            mistakes++; // Si la contrasena ingresada no es correcta se incrementa el contador de errores
+            setLeds(mistakes); // Cambian los leds para mostar el numero de errores
             break;
         }
-        if(i == 3){
-            displayOpen();
-            mistakes = 0;
-            setLeds(mistakes);
+        if (i == 3) {
+            // La contraseña es correcta
+            displayOpen(); // Se escribe OPEN en el display
+            mistakes = 0; // Se resetea contador de errores
+            setLeds(mistakes);  // Cambian los leds para mostar el numero de errores
         }
     }
 
-    if (mistakes >= 3){
-        displayLocked();
-        __delay_cycles( DELAY_CYCLES );
+    if (mistakes >= 3) {
+        // Se ha alcanzado el límite de intentos incorrectos
+        displayLocked(); // Se muestra que la contrasena es incorrecta en el display
+        __delay_cycles(DELAY_CYCLES); // Delay para bloquear el micro ya que la contrasena es incorrecta
+        // Se resetean los estados del encoder y boton para evitar entradas durante el bloqueo del display
         encoderResetStatus();
         buttonResetStatus();
         setDisplay(display.psw_try);
-        mistakes = 2;
+        mistakes = 2; // Se reduce le numero de errores
         setLeds(mistakes);
     }
-
 }
-
 
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-
-/******************************************************************************/

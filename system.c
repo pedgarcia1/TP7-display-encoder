@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     system.c
-  @brief    MCU system driver
-  @author   Nicolï¿½s Magliola
+  @brief    Controlador del sistema del MCU
+  @Author
  ******************************************************************************/
 
 /*******************************************************************************
@@ -12,8 +12,6 @@
 
 #include "board.h"
 #include "hardware.h"
-
-
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -45,11 +43,15 @@
  *******************************************************************************
  ******************************************************************************/
 
+/**
+ * @brief Inicializa el sistema del MCU.
+ *        Configura la frecuencia del DCO (Oscilador Controlado Digitalmente) y establece las fuentes y preescaladores de MCLK y SMCLK.
+ */
 void systemInitFirst(void)
 {
-    WDTCTL = WDTPW | WDTHOLD; // stop watchdog timer
+    WDTCTL = WDTPW | WDTHOLD; // Detener el temporizador de watchdog
 
-    // Configure DCO
+    // Configurar DCO
     DCOCTL = 0;
 #if DCOCLK_FREQ_HZ == 1000000UL
     BCSCTL1 = CALBC1_1MHZ;
@@ -67,37 +69,35 @@ void systemInitFirst(void)
 #error Mal definido el clock del sistema
 #endif
 
-    // Configure MCLK and SMCLK
-    BCSCTL2 = SELM_0 | (MCLK_PRESCALER_2POW<<4) | (SMCLK_PRESCALER_2POW<<4);
+    // Configurar MCLK y SMCLK
+    BCSCTL2 = SELM_0 | (MCLK_PRESCALER_2POW << 4) | (SMCLK_PRESCALER_2POW << 4);
 }
 
-
+/**
+ * @brief Inicializa los periféricos y configuraciones de la placa.
+ *        TODO: Completar con la configuración de los pines restantes utilizados.
+ */
 void boardInit(void)
 {
-
-
-    // TODO: COMPLETAR CON LA CONFIGURACIï¿½N DEL RESTO DE LOS PINES UTILIZADOS
-
-
+    // TODO: COMPLETAR CON LA CONFIGURACIÓN DE LOS PINES RESTANTES UTILIZADOS
 }
 
-
+/**
+ * @brief Realiza los últimos pasos de inicialización del sistema del MCU.
+ *        Configura el intervalo del temporizador de watchdog y habilita la interrupción.
+ */
 void systemInitLast(void)
 {
-
-    WDTCTL = WDT_MDLY_0_5; // Interval timer mode ; according interval selection
-    IE1 |=  WDTIE; // Enable the WDTIE bit
-    enable_interrupts();  // Enable General interrupts
+    WDTCTL = WDT_MDLY_0_5; // Modo de temporizador de intervalo; según la selección del intervalo
+    IE1 |= WDTIE; // Habilitar el bit WDTIE
+    enable_interrupts(); // Habilitar interrupciones generales
 }
-
 
 /*******************************************************************************
  *******************************************************************************
                         LOCAL FUNCTION DEFINITIONS
  *******************************************************************************
  ******************************************************************************/
-
-
 
 /******************************************************************************/
 

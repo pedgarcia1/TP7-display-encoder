@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     gpio.h
-  @brief    Simple GPIO Pin services, similar to Arduino
-  @author   Nicolás Magliola
+  @brief    Header de servicios simples de pines GPIO, similares a Arduino
+  @author   Grupo 5
  ******************************************************************************/
 
 #ifndef _GPIO_H_
@@ -29,8 +29,8 @@
 #endif // INPUT
 
 
-// Convert port and numbber into pin ID
-// Ex: P1.4 -> PORTNUM2PIN(1, 4) --> 0x14
+// Convertir el puerto y el número en identificador de pin
+// Ej: P1.4 -> PORTNUM2PIN(1, 4) --> 0x14
 //     P2.6 -> PORTNUM2PIN(2, 6) --> 0x26
 #define PORTNUM2PIN(po, n)  ((po)<<4 | (n))
 #define PIN2PORT(pi)        (((pi)>>4) & 0x03)
@@ -53,31 +53,31 @@ typedef uint8_t gpio_t;
  ******************************************************************************/
 
 /**
- * @brief Configures the specified pin to behave as a GPIO
- * @param pin The pin id whose mode you wish to set (according PORTNUM2PIN)
- * @param mode INPUT, OUTPUT, INPUT_PULLUP or INPUT_PULLDOWN.
+ * @brief Configura el pin especificado para comportarse como un GPIO
+ * @param pin Identificador del pin (según PORTNUM2PIN)
+ * @param mode Modo deseado (INPUT, OUTPUT, INPUT_PULLUP o INPUT_PULLDOWN)
  */
-void gpioMode (gpio_t pin, uint8_t mode);
+void gpioMode(gpio_t pin, uint8_t mode);
 
 /**
- * @brief Writes a HIGH or a LOW value to a digital pin
- * @param pin The pin id (according PORTNUM2PIN)
- * @param value Desired value (HIGH or LOW)
+ * @brief Escribe un valor HIGH o LOW en un pin digital
+ * @param pin Identificador del pin (según PORTNUM2PIN)
+ * @param value Valor deseado (HIGH o LOW)
  */
-void gpioWrite (gpio_t pin, uint8_t value);
+void gpioWrite(gpio_t pin, uint8_t value);
 
 /**
- * @brief Toggles the value of a digital pin (HIGH<->LOW)
- * @param pin The pin id (according PORTNUM2PIN)
+ * @brief Invierte el valor de un pin digital (HIGH<->LOW)
+ * @param pin Identificador del pin (según PORTNUM2PIN)
  */
-void gpioToggle (gpio_t pin);
+void gpioToggle(gpio_t pin);
 
 /**
- * @brief Reads the value from a specified digital pin, either HIGH or LOW.
- * @param pin The pin id (according PORTNUM2PIN)
- * @return HIGH or LOW
+ * @brief Lee el valor de un pin digital, ya sea HIGH o LOW
+ * @param pin Identificador del pin (según PORTNUM2PIN)
+ * @return HIGH o LOW
  */
-uint8_t gpioRead (gpio_t pin);
+uint8_t gpioRead(gpio_t pin);
 
 
 /*******************************************************************************

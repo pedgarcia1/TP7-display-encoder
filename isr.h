@@ -1,6 +1,6 @@
 /***************************************************************************//**
   @file     isr.h
-  @brief    Interrupt driver
+  @brief    Header del driver de interrupciones
   @author   Grupo 5
  ******************************************************************************/
 
@@ -30,7 +30,7 @@
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
-// +ej: extern unsigned int anio_actual;+
+// +ej: Declarar prototipos de variables globales aquí (ej: extern unsigned int anio_actual;)+
 
 
 /*******************************************************************************
@@ -38,13 +38,13 @@
  ******************************************************************************/
 
 /**
- * @brief Sends function to be executed in the interrupt service routine
- * @param function Pointer to function to be executed 
- * @param period period of the function execution in times of interruptions. (ej: 1 = every interruption, 2 = every 2 interruptions, etc)
-*/
+ * @brief Envía una función para que se ejecute en la rutina de servicio de interrupción
+ * @param function Puntero a la función que se ejecutará
+ * @param period Período de ejecución de la función en número de interrupciones (ej: 1 = en cada interrupción, 2 = en cada 2 interrupciones, etc.)
+ */
 void send_to_isr(void (*function)(void), unsigned int period);
 
-// +ej: char lcd_goto (int fil, int col);+
+// +ej: Declarar prototipos de funciones globales aquí (ej: char lcd_goto (int fil, int col);)+
 
 
 /*******************************************************************************

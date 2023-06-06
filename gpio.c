@@ -1,6 +1,6 @@
 /***************************************************************************//**
   @file     gpio.c
-  @brief    Simple GPIO Pin services, similar to Arduino
+  @brief    Servicios simples de pines GPIO, similares a Arduino
   @author   Nicolás Magliola
  ******************************************************************************/
 
@@ -39,11 +39,11 @@
 
 /*******************************************************************************
  *******************************************************************************
-                        GLOBAL FUNCTION DEFINITIONS
+                        DEFINICIONES DE FUNCIONES GLOBALES
  *******************************************************************************
  ******************************************************************************/
 
-void gpioMode (gpio_t pin, uint8_t mode)
+void gpioMode(gpio_t pin, uint8_t mode)
 {
     uint8_t port, num;
 
@@ -109,7 +109,7 @@ void gpioMode (gpio_t pin, uint8_t mode)
 }
 
 
-void gpioWrite (gpio_t pin, uint8_t value)
+void gpioWrite(gpio_t pin, uint8_t value)
 {
     uint8_t port, num;
 
@@ -135,7 +135,7 @@ void gpioWrite (gpio_t pin, uint8_t value)
 }
 
 
-void gpioToggle (gpio_t pin)
+void gpioToggle(gpio_t pin)
 {
     uint8_t port, num;
 
@@ -155,7 +155,7 @@ void gpioToggle (gpio_t pin)
 }
 
 
-uint8_t gpioRead (gpio_t pin)
+uint8_t gpioRead(gpio_t pin)
 {
     uint8_t port, num, value;
 
@@ -183,7 +183,7 @@ uint8_t gpioRead (gpio_t pin)
 
 /*******************************************************************************
  *******************************************************************************
-                        LOCAL FUNCTION DEFINITIONS
+                        DEFINICIONES DE FUNCIONES LOCALES
  *******************************************************************************
  ******************************************************************************/
 

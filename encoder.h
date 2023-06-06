@@ -1,11 +1,11 @@
 /**
  * @file     encoder.h
- * @brief    encoder driver header file
- * @author   Teo Nicoletti
+ * @brief    Archivo de encabezado del controlador del encoder
+ * @Author   Teo Nicoletti
  */
 
 #ifndef _ENCODER_H_
-#define _ENCODER_H_    
+#define _ENCODER_H_
 
 /* INCLUDE HEADER FILES */
 
@@ -13,15 +13,15 @@
 
 /* CONSTANT AND MACRO DEFINITIONS USING #DEFINE */
 
-
-
-
 /* ENUMERATIONS AND STRUCTURES AND TYPEDEFS */
 
-typedef enum{
-    IDLE,
-    CW,
-    CCW
+/**
+ * @brief Enumeración de estados del encoder
+ */
+typedef enum {
+    IDLE, /**< Estado inactivo, no se detectó movimiento */
+    CW,   /**< Movimiento en sentido horario detectado */
+    CCW   /**< Movimiento en sentido antihorario detectado */
 } encoderStatus_t;
 
 /* VARIABLES WITH GLOBAL SCOPE 
@@ -30,27 +30,33 @@ typedef enum{
 /* FUNCTION PROTOTYPES WITH GLOBAL SCOPE */
 
 /**
- * @brief Inicia el driver del encoder
-*/
+ * @brief Inicializa el controlador del encoder
+ */
 void encoderInit(void);
 
+/**
+ * @brief Obtiene el estado actual del encoder
+ * @return El estado del encoder:
+ *         - IDLE (0) si no se ha producido movimiento
+ *         - CW (1) si se ha producido un movimiento en sentido horario
+ *         - CCW (2) si se ha producido un movimiento en sentido antihorario
+ */
+encoderStatus_t encoderISR(void);
 
 /**
- * @brief Devuelve el estado del encoder
- * @return IDLE (=0) si no se movio, CW (=1) si se movio a la clockwise, CCW (=2) si se movio counter clockwise
-*/
-encoderStatus_t encoderISR(void);
+ * @brief Obtiene el estado actual del encoder
+ * @return El estado del encoder:
+ *         - IDLE (0) si no se ha producido movimiento
+ *         - CW (1) si se ha producido un movimiento en sentido horario
+ *         - CCW (2) si se ha producido un movimiento en sentido antihorario
+ */
 encoderStatus_t encoderGetStatus(void);
+
+/**
+ * @brief Restablece el estado del encoder
+ */
 void encoderResetStatus(void);
 
-/**
- * @brief TODO: completar descripcion
- * @param param1 Descripcion parametro 1
- * @param param2 Descripcion parametro 2
- * @return Descripcion valor que devuelve
-*/
 
-
-// +ej: char lcd_goto (int fil, int col);+
 
 #endif // _ENCODER_H_

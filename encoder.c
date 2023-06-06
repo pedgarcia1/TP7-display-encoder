@@ -1,10 +1,8 @@
-
 /**
  * @file     encoder.c
- * @brief    encoder driver
- * @author   Teo Nicoletti
+ * @brief    Controlador del encoder
+ * @Author   Teo Nicoletti
  */
-
 
 /** INCLUDE HEADER FILES **/
 
@@ -15,11 +13,7 @@
 
 /* CONSTANT AND MACRO DEFINITIONS USING #DEFINE */
 
-
-
 /* ENUMERATIONS AND STRUCTURES AND TYPEDEFS */
-
-
 
 /* VARIABLES WITH GLOBAL SCOPE 
  * +ej: unsigned int anio_actual;*/
@@ -44,20 +38,36 @@ volatile uint8_t A_now, A_before, B_now, B_before;
 
 /* GLOBAL FUNCTION DEFINITIONS */
 
+/**
+ * @brief Inicializa el controlador del encoder
+ */
 void encoderInit(void){
     gpioMode(ENC_A_PIN, INPUT_PULLUP);
     gpioMode(ENC_B_PIN, INPUT_PULLUP);
-    send_to_isr(encoderISR,10);
+    send_to_isr(encoderISR, 10);
 }
+
+/**
+ * @brief Obtiene el estado actual del encoder
+ * @return El estado actual del encoder
+ */
 encoderStatus_t encoderGetStatus(){
     return status;
 }
 
+/**
+ * @brief Restablece el estado del encoder
+ */
 void encoderResetStatus(){
     status = IDLE;
 }
+
+/**
+ * @brief Rutina de interrupción del encoder
+ * @return El estado actual del encoder
+ */
 encoderStatus_t encoderISR() {
-        if (status == IDLE){
+    if (status == IDLE){
         A_now = gpioRead(ENC_A_PIN);
         B_now = gpioRead(ENC_B_PIN);
 
@@ -67,14 +77,10 @@ encoderStatus_t encoderISR() {
         else if ((B_now ^ 1) & B_before & A_now & A_before) {
             status = CW;
         }
-        }
-        A_before = A_now;
-        B_before = B_now;
-        return status;
+    }
+    A_before = A_now;
+    B_before = B_now;
+    return status;
 }
 
 /* LOCAL FUNCTION DEFINITIONS */
-
-
- 
-

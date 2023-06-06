@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     system.h
-  @brief    MCU system driver
-  @author   Nicolás Magliola
+  @brief    Header del controlador del sistema del MCU
+  @Author   Nicolás Magliola
  ******************************************************************************/
 
 #ifndef _SYSTEM_H_
@@ -19,6 +19,7 @@
  ******************************************************************************/
 #define CLOSED 0
 #define OPEN 1
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -28,6 +29,7 @@ typedef struct
     uint8_t active;
 
 } display_t;
+
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -37,19 +39,19 @@ typedef struct
  ******************************************************************************/
 
 /**
- * @brief Initialize system first: internal MCU stuffs (clock, watchdog, etc.)
+ * @brief Inicializa el sistema en primer lugar: aspectos internos del MCU (reloj, watchdog, etc.)
  */
 void systemInitFirst(void);
 
 
 /**
- * @brief Initialize board: MCU - board interface stuffs (pinout, etc.)
+ * @brief Inicializa la placa: aspectos de interfaz MCU-placa (distribución de pines, etc.)
  */
 void boardInit(void);
 
 
 /**
- * @brief Initialize system last: internal MCU stuffs (ISR, etc.)
+ * @brief Inicializa el sistema al final: aspectos internos del MCU (ISR, etc.)
  */
 void systemInitLast(void);
 

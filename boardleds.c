@@ -1,8 +1,8 @@
 
 /**
- * @file     encoder.c
- * @brief    encoder driver
- * @author   Teo Nicoletti
+ * @file     encoder.h
+ * @brief    Controlador de los LEDs de la placa del display
+ * @author   Grupo 5
  */
 
 

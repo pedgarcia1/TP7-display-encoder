@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     hardware.h
   @brief    Hardware, system and MCU registers management
-  @author   Nicolás Magliola
+  @author   Grupo 5
  ******************************************************************************/
 
 #ifndef _HARDWARE_H_
@@ -27,7 +27,7 @@
 #define SMCLK_PRESCALER_2POW    0
 #define MCLK_FREQ_HZ            (DCOCLK_FREQ_HZ/(1UL<<MCLK_PRESCALER_2POW)) // 8MHz
 #define SMCLK_FREQ_HZ           (DCOCLK_FREQ_HZ/(1UL<<SMCLK_PRESCALER_2POW)) // 8MHz
-#define DELAY_SEC               5 //segundos
+#define DELAY_SEC               5 // Segundos de bloquo de display cuando se alcanza la cantidad maxima de errores
 
 #define enable_interrupts()     _BIS_SR(GIE)
 #define disable_interrupts()    _BIC_SR(GIE)
@@ -44,7 +44,7 @@
 /*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
-
+    // Se definen cantidad de ciclos de delay segun frecuencia del clock y segun DELAY_SEC
     #if DCOCLK_FREQ_HZ == 1000000UL
         #define DELAY_CYCLES 1000000*DELAY_SEC/3
     #elif DCOCLK_FREQ_HZ == 8000000UL
