@@ -11,7 +11,6 @@
 #include "boardleds.h"
 #include "gpio.h"
 #include "board.h"
-#include "isr.h"
 
 /* CONSTANT AND MACRO DEFINITIONS USING #DEFINE */
 

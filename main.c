@@ -88,7 +88,7 @@ void AppRun(void)
     uint8_t buttonFlag = buttonGetStatus();
     // Logica segun estado del encoder
     switch (encoderFlag) {
-        case 1:
+        case CW:
             // El encoder gira en sentido horario
             encoderResetStatus(); // Reinicia el estado del encoder
             // Logica para aumentar el numero visible en el display entre 0 y 9
@@ -96,7 +96,7 @@ void AppRun(void)
             display.psw_try[display.active] %= 10;
             setDisplay(display.psw_try); // Muestra el numero en el display
             break;
-        case 2:
+        case CCW:
             // El encoder gira en sentido antihorario
             encoderResetStatus(); // Reinicia el estado del encoder
             // Logica para aumentar el numero visible en el display entre 0 y 9
