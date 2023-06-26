@@ -27,6 +27,9 @@
 #define Disp_f PORTNUM2PIN(1,5)
 #define Disp_g PORTNUM2PIN(1,6)
 
+#define Disp_dot PORTNUM2PIN(2,5)
+
+
 // selector display
 #define Disp_sel0 PORTNUM2PIN(2,0)
 #define Disp_sel1 PORTNUM2PIN(2,1)
@@ -37,7 +40,7 @@
 
 // Selector leds
 #define Status0 PORTNUM2PIN(2, 4)
-#define Status1 PORTNUM2PIN(2, 5)
+#define Status1 PORTNUM2PIN(2, 6)
 
 // Switch
 #define BUTTON_PIN PORTNUM2PIN(1, 7)

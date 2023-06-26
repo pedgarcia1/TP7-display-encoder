@@ -12,6 +12,7 @@
 #include "SSDisp.h"
 #include "board.h"
 #include "isr.h"
+#include <math.h>
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
@@ -33,7 +34,7 @@
  * ROM CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
 const int digitArray[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
-// Arreglo con los valores hexadecimales correspondientes a cada dígito (0-9)
+// Arreglo con los valores hexadecimales correspondientes a cada dï¿½gito (0-9)
 
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
@@ -43,6 +44,7 @@ uint8_t display_active;
 uint8_t frame;
 uint16_t flag_active;
 uint8_t show[4];
+uint8_t display_dot;
 
 /*******************************************************************************
  *******************************************************************************
@@ -53,7 +55,7 @@ uint8_t show[4];
 /**
  * @brief Inicializa el controlador del display de siete segmentos
  */
-void displayInit(){
+void displayInit(uint8_t selected_mode){
     // Configurar los pines de control del display como salidas
     gpioMode (Disp_a, OUTPUT);
     gpioMode (Disp_b, OUTPUT);
@@ -62,19 +64,23 @@ void displayInit(){
     gpioMode (Disp_e, OUTPUT);
     gpioMode (Disp_f, OUTPUT);
     gpioMode (Disp_g, OUTPUT);
+    gpioMode (Disp_dot, OUTPUT);
     gpioMode (Disp_sel0, OUTPUT);
     gpioMode (Disp_sel1, OUTPUT);
 
-    send_to_isr(displayISR, 70);
+    if (selected_mode == BLINK)
+        send_to_isr(displayBlinkISR, 70);
+    else if(selected_mode == STATIC)
+        send_to_isr(displayStaticISR, 70);
 }
 
 /**
- * @brief Imprime un dígito en una posición específica
- * @param val El valor del dígito a imprimir
- * @param pos La posición en la que se imprimirá el dígito
+ * @brief Imprime un dï¿½gito en una posiciï¿½n especï¿½fica
+ * @param val El valor del dï¿½gito a imprimir
+ * @param pos La posiciï¿½n en la que se imprimirï¿½ el dï¿½gito
  */
 void printDigit(int pos){
-    // Configurar los pines del display para mostrar el dígito correspondiente
+    // Configurar los pines del display para mostrar el dï¿½gito correspondiente
     gpioWrite(Disp_a, display_show[pos] & 1 << 0);
     gpioWrite(Disp_b, display_show[pos] & 1 << 1);
     gpioWrite(Disp_c, display_show[pos] & 1 << 2);
@@ -82,6 +88,7 @@ void printDigit(int pos){
     gpioWrite(Disp_e, display_show[pos] & 1 << 4);
     gpioWrite(Disp_f, display_show[pos] & 1 << 5);
     gpioWrite(Disp_g, display_show[pos] & 1 << 6);
+    gpioWrite(Disp_dot, pos == display_dot);
 
     gpioWrite(Disp_sel0, pos & 1 << 0);
     gpioWrite(Disp_sel1, pos & 1 << 1);
@@ -108,9 +115,9 @@ void displayLocked(){
 }
 
 /**
- * @brief Rutina de interrupción para el control del display
+ * @brief Rutina de interrupciï¿½n para el control del display
  */
-void displayISR(){
+void displayBlinkISR(){
     if (frame > 3)
         frame = 0;
     flag_active = flag_active + BLINK_SPEED;
@@ -123,12 +130,21 @@ void displayISR(){
     frame++;
 }
 
+void displayStaticISR(){
+    if (frame > 3)
+        frame = 0;
+
+        printDigit(frame);
+
+    frame++;
+}
+
 /**
- * @brief Apaga el dígito en la posición especificada
- * @param pos La posición del dígito a apagar
+ * @brief Apaga el dï¿½gito en la posiciï¿½n especificada
+ * @param pos La posiciï¿½n del dï¿½gito a apagar
  */
 void printOff(int pos){
-    // Apagar los pines del display correspondientes al dígito especificado
+    // Apagar los pines del display correspondientes al dï¿½gito especificado
     gpioWrite(Disp_a, 0);
     gpioWrite(Disp_b, 0);
     gpioWrite(Disp_c, 0);
@@ -143,7 +159,7 @@ void printOff(int pos){
 
 /**
  * @brief Establece los valores a mostrar en el display
- * @param show[] Arreglo de 4 elementos con los valores a mostrar en cada posición
+ * @param show[] Arreglo de 4 elementos con los valores a mostrar en cada posiciï¿½n
  */
 void setDisplay(uint8_t show[]){
     digit2hexa(show[0], 0);
@@ -153,20 +169,75 @@ void setDisplay(uint8_t show[]){
 }
 
 /**
- * @brief Establece el dígito activo en el display
- * @param active La posición del dígito a activar
+ * @brief Establece el dï¿½gito activo en el display
+ * @param active La posiciï¿½n del dï¿½gito a activar
  */
 void setActive(uint8_t active){
     display_active = active;
 }
 
 /**
- * @brief Convierte un dígito decimal en su valor hexadecimal correspondiente
- * @param val El dígito decimal
- * @param pos La posición en la que se almacenará el valor hexadecimal
+ * @brief Convierte un dï¿½gito decimal en su valor hexadecimal correspondiente
+ * @param val El dï¿½gito decimal
+ * @param pos La posiciï¿½n en la que se almacenarï¿½ el valor hexadecimal
  */
 void digit2hexa(int val, int pos){
     display_show[pos] = digitArray[val];
+}
+
+void setDisplay_float(float value){
+    
+    uint8_t integer_digits;
+    integer_digits = (int)log10(value) + 1;
+    uint16_t digit;
+
+    uint8_t i;
+
+    if (integer_digits == 0)
+        integer_digits = 1;
+
+    for (i = 0; i < 4; i++)
+    {
+        digit = (uint16_t) ((value)/pow(10,integer_digits-1-i));
+
+        digit = digit - ((uint16_t) (digit/10))*10;
+        digit2hexa(digit, i);
+    }
+
+    display_dot = integer_digits - 1;
+
+    /*char numberString[DISPLAY_DIGITS+1];
+    sprintf(numberString, "%f", number);
+    for (int i = 0; numberString[i] != '\0' ; i++) {
+        if (numberString[i] == '.' || numberString[i] == '-') {
+            continue;
+        }
+        int digit = atoi(&numberString[i]);
+        display_show[i] = digit;
+        
+    }*/
+
+    /*int integerPart = (int)number;
+    float fractionalPart = number - integerPart;
+
+    uint8_t integer_digits = (int)log10(number) + 1;
+
+    // Extraer los dÃ­gitos de la parte entera
+    int temp = abs(integerPart);
+    int digitCount = (integerPart == 0) ? 1 : (int)log10(temp) + 1;
+    for (int i = digitCount - 1; i >= 0; i--) {
+        int digit = temp / (int)pow(10, i);
+        display_show[digitCount-1-i] = digit;
+        temp %= (int)pow(10, i);
+    }
+
+    // Extraer los dÃ­gitos de la parte fraccionaria
+    while (fractionalPart != 0) {
+        fractionalPart *= 10;
+        int digit = (int) fractionalPart;
+        display_show[digitCount++] = digit;
+        fractionalPart -= digit;
+    }*/
 }
 
 /*******************************************************************************

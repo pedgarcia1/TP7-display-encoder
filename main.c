@@ -47,7 +47,7 @@ void checkOpen(void);
 
 // Estructura de datos para el display
 display_t display = {
-    .psw_try = {0, 0, 0, 0},
+    .psw_try = {1, 2, 4, 8},
     .active = 0
 };
 
@@ -63,7 +63,7 @@ void main(void)
     systemInitLast();
 
     for (;;)
-        AppRun();
+        setDisplay_float(0.328);
     // NO TOCAR
 }
 
@@ -73,7 +73,7 @@ void AppInit(void)
     // Inicialización del display
     setDisplay(display.psw_try);
     setActive(display.active);
-    displayInit();
+    displayInit(STATIC);
     encoderInit(); // Inicialización del encoder
     buttonInit(); // Inicialización del boton
     ledsInit(mistakes); // Inicialización de los LEDs (contador de errores)
